@@ -1,0 +1,63 @@
+{
+  "shader_programs": [
+    {
+      "name": "gbuffer_terrain",
+      "shaders": [
+        {
+          "type": "vertex",
+          "file": "gbuffer_terrain.vert"
+        },
+        {
+          "type": "fragment",
+          "file": "gbuffer_terrain.frag"
+        }
+      ],
+      "layout": [
+        {
+          "type": "float3",
+          "name": "vertices",
+          "normalized": false
+        },
+        {
+          "type": "float",
+          "name": "static_illumination",
+          "normalized": false
+        }
+      ],
+      "uniforms": [
+        {
+          "type": "mat4",
+          "name": "modelMatrix"
+        },
+        {
+          "type": "mat4",
+          "name": "viewMatrix"
+        },
+        {
+          "type": "mat4",
+          "name": "projMatrix"
+        },
+        {
+          "type": "bool",
+          "name": "wireframeMode"
+        },
+        {
+          "type": "float3",
+          "name": "wireframeColor"
+        },
+        {
+          "type": "float",
+          "name": "fogStart"
+        },
+        {
+          "type": "float",
+          "name": "fogEnd"
+        },
+        {
+          "type": "float3",
+          "name": "fogColor"
+        }
+      ]
+    }
+  ]
+}
