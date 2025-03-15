@@ -83,7 +83,7 @@ void GraphicContext::Init() {
         LOG_FATAL("Failed to initialize GLAD.");
     }  // Initialized glad
 
-#ifndef _NDEBUG
+#ifndef NDEBUG
     if (GLAD_GL_ARB_debug_output) {
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
         glDebugMessageCallbackARB(glDebugOutputCallBack, nullptr);
