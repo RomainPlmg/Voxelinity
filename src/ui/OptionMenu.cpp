@@ -3,9 +3,9 @@
 #include "core/Application.h"
 #include "events/EventApplication.h"
 #include "events/EventDispatcher.h"
+#include "gfx/Camera.h"
 #include "gfx/GraphicContext.h"
 #include "pch.h"
-#include "gfx/Camera.h"
 
 int OptionMenu::m_MSAA = 0;
 
@@ -45,8 +45,7 @@ void OptionMenu::Show() {
             EventDispatcher::Get().Dispatch(event);
         }
 
-        static float mouseSensitivity = CAMERA_SENSITIVITY;       // Valeur initiale du slider
-        ImGui::Text("Mouse sensitivity :");
+        static float mouseSensitivity = CAMERA_SENSITIVITY;                               // Initial slider value
         ImGui::SliderFloat("Mouse sensitivity", &mouseSensitivity, 0.01f, 5.0f, "%.2f");  // Slider float
         SetMouseSensitivityEvent event(mouseSensitivity);
         EventDispatcher::Get().Dispatch(event);
