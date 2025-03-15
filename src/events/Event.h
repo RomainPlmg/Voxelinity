@@ -23,6 +23,7 @@ enum class EventType {
     ToggleVsync,
     ToggleWireframeView,
     SetMSAA,
+    SetMouseSensitivity,
 
     /* Keyboard events */
     KeyPressed,

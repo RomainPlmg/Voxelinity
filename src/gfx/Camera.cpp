@@ -48,6 +48,11 @@ void Camera::OnEvent(const Event& event) {
         const auto* pauseEvent = dynamic_cast<const PauseEvent*>(&event);
         if (!pauseEvent->isPaused) Init();
     }
+
+    if (event.GetType() == EventType::SetMouseSensitivity) {
+        const auto* setMouseSensitivityEvent = dynamic_cast<const SetMouseSensitivityEvent*>(&event);
+        m_MouseSensitivity = setMouseSensitivityEvent->value;
+    }
 }
 
 glm::mat4 Camera::GetViewMatrix() const { return glm::lookAt(m_Position, m_Position + m_Front, m_Up); }

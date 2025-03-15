@@ -117,4 +117,19 @@ class ToggleWireframeViewEvent final : public ApplicationEvent {
     }
 };
 
+class SetMouseSensitivityEvent final : public ApplicationEvent {
+    public:
+     float value;
+
+     SetMouseSensitivityEvent(float value) : value(value) {}
+
+     EVENT_CLASS_TYPE(EventType::SetMouseSensitivity)
+
+     std::string ToString() const override {
+        std::stringstream ss;
+        ss << "Mouse sensitivity = " << value;
+        return ss.str();
+    }  
+};
+
 #endif  // __EVENTAPPLICATION_H__
