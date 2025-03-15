@@ -77,7 +77,7 @@ void DebugOverlay::Show() {
             if (ImGui::MenuItem("Top-right", NULL, location == 1)) location = 1;
             if (ImGui::MenuItem("Bottom-left", NULL, location == 2)) location = 2;
             if (ImGui::MenuItem("Bottom-right", NULL, location == 3)) location = 3;
-            if (&m_Open && ImGui::MenuItem("Close")) m_Open = false;
+            if (ImGui::MenuItem("Close")) m_Open = false;
             ImGui::EndPopup();
         }
     }
