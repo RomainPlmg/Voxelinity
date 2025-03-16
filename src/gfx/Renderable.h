@@ -24,6 +24,7 @@ class Renderable {
 
     /* Getters */
     int GetID() const { return m_ID; }
+    const glm::vec3& GetPosition() const { return m_Position; }
 
     glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
 

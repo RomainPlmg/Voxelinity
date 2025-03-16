@@ -49,14 +49,15 @@ const std::unordered_map<Voxel::Face, std::array<float, 16>> Chunk::m_VoxelVerti
 };
 // clang-format on
 
-Chunk::Chunk(glm::ivec3 position) : m_Generated(false), Renderable(position, 1) {
+Chunk::Chunk(glm::ivec3 position) : m_DataGenerated(false), m_MeshGenerated(false), Renderable(position, 1) {
     // Recover the shader
     m_Shader = ShaderProgramLibrary::Get().GetShaderProgram("gbuffer_terrain");
 
     EventDispatcher::Get().Subscribe(EventCategory::EventCategoryAll, BIND_EVENT_FN(Chunk::OnEvent));
 }
 
-void Chunk::Load(const FastNoiseLite& noise) {
+void Chunk::GenerateData(const FastNoiseLite& noise) {
+    int boundaryIndex = 0;
     for (int z = 0; z < CHUNK_WIDTH; z++) {
         for (int x = 0; x < CHUNK_WIDTH; x++) {
             // Calculate the heightmap at position x/z
@@ -72,13 +73,22 @@ void Chunk::Load(const FastNoiseLite& noise) {
                 glm::vec3 cubePos = glm::vec3(x, y, z);
                 m_Voxels[index] = new Voxel(cubePos);
 
+                // Check if voxel is at boundary
+                if (x == 0 || x == CHUNK_WIDTH - 1 || z == 0 || z == CHUNK_WIDTH - 1 || y == 0 || y == CHUNK_HEIGHT - 1) {
+                    m_BoundaryVoxels[boundaryIndex] = m_Voxels[index];
+                    boundaryIndex++;
+                }
+
                 if (y > height) {
                     m_Voxels[index]->SetTransparent(true);
                 }
             }
         }
     }
+    m_DataGenerated = true;
+}
 
+void Chunk::GenerateMesh() {
     RemoveInternalFaces();
     for (auto& voxel : m_Voxels) {
         if (voxel->IsTransparent()) continue;
@@ -110,7 +120,8 @@ void Chunk::Load(const FastNoiseLite& noise) {
             AddFaceToIndices();
         }
     }
-    m_Generated = true;
+
+    m_MeshGenerated = true;
 }
 
 void Chunk::Unload() {
@@ -160,6 +171,7 @@ void Chunk::RemoveInternalFaces() {
                         voxel->SetFaceInvisible(face);
                     }
                 }
+
             } else if (face == Voxel::Face::Top) {
                 if (voxel->GetPosition().y != CHUNK_HEIGHT - 1) {
                     auto neighbor = GetVoxelatCoord(glm::vec3(voxel->GetPosition().x, voxel->GetPosition().y + 1, voxel->GetPosition().z));
