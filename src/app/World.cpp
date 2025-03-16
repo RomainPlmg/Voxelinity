@@ -34,8 +34,8 @@ void World::Init() {
 
             auto& chunk = m_Chunks[glm::vec3(x, 0, z)];
             chunk->GetShader()->GetUniform("wireframeColor")->SetValue(glm::vec3(1.0f, 1.0f, 1.0f));
-            chunk->GetShader()->GetUniform("fogStart")->SetValue(static_cast<float>(m_RenderDistance * 2 * CHUNK_WIDTH - CHUNK_WIDTH));
-            chunk->GetShader()->GetUniform("fogEnd")->SetValue(static_cast<float>(m_RenderDistance * 2 * CHUNK_WIDTH));
+            chunk->GetShader()->GetUniform("fogStart")->SetValue(static_cast<float>(m_RenderDistance * CHUNK_WIDTH - CHUNK_WIDTH));
+            chunk->GetShader()->GetUniform("fogEnd")->SetValue(static_cast<float>(m_RenderDistance * CHUNK_WIDTH));
             chunk->GetShader()->GetUniform("fogColor")->SetValue(glm::vec3(0.1f, 0.1f, 0.1f));
 
             // Send chunk generation in threads
