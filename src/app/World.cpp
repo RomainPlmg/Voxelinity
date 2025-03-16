@@ -117,9 +117,6 @@ void World::RemoveBoundaryFaces(Chunk& chunk) {
 
     lock.unlock();
 
-    LOG_INFO("Neighbors -> Left: {}, Right: {}, Front: {}, Back: {}", leftNeighbor ? "OK" : "NULL", rightNeighbor ? "OK" : "NULL",
-             frontNeighbor ? "OK" : "NULL", backNeighbor ? "OK" : "NULL");
-
     for (auto& voxel : chunk.GetBoundaryVoxels()) {
         if (voxel == nullptr) {
             LOG_ERROR("Cannot remove boundary faces, boundary voxel is nullptr.");
