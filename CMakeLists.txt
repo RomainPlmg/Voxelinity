@@ -24,6 +24,7 @@ add_executable(Voxelinity ${SRC} ${IMGUI_SRC})
 
 # Set definition for assets directory
 target_compile_definitions(Voxelinity PRIVATE ASSET_DIRECTORY="../assets/")
+target_compile_definitions(Voxelinity PRIVATE GLM_ENABLE_EXPERIMENTAL)
 
 # Find OpenGL
 set(OpenGL_GL_PREFERENCE "GLVND") # Target modern OpenGL

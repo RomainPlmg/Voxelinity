@@ -3,6 +3,7 @@
 
 #include <FastNoiseLite.h>
 
+#include <glm/gtx/hash.hpp>
 #include <memory>
 #include <shared_mutex>
 #include <unordered_map>
@@ -18,16 +19,6 @@ struct WorldStatus {
     glm::vec3 playerPos;
 
     WorldStatus() : playerPos(glm::vec3(0)) {}
-};
-
-struct Vec3Hash {
-    std::size_t operator()(const glm::vec3& v) const noexcept {
-        std::hash<float> hasher;
-        std::size_t h1 = hasher(v.x);
-        std::size_t h2 = hasher(v.y);
-        std::size_t h3 = hasher(v.z);
-        return h1 ^ (h2 << 1) ^ (h3 << 2);
-    }
 };
 
 class World {
@@ -56,7 +47,7 @@ class World {
     Player m_Player;
     FastNoiseLite m_Noise;
 
-    std::unordered_map<glm::vec3, std::shared_ptr<Chunk>, Vec3Hash> m_Chunks;
+    std::unordered_map<glm::vec3, std::shared_ptr<Chunk>> m_Chunks;
     std::shared_mutex m_ChunkMutex;
 
     static WorldStatus m_Status;
