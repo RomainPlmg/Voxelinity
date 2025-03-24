@@ -23,7 +23,7 @@ file(GLOB IMGUI_SRC
 add_executable(Voxelinity ${SRC} ${IMGUI_SRC})
 
 # Set definition for assets directory
-target_compile_definitions(Voxelinity PRIVATE ASSET_DIRECTORY="../assets/")
+target_compile_definitions(Voxelinity PRIVATE ASSET_DIRECTORY="${CMAKE_SOURCE_DIR}/assets/")
 target_compile_definitions(Voxelinity PRIVATE GLM_ENABLE_EXPERIMENTAL)
 
 # Find OpenGL
