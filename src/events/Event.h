@@ -24,6 +24,8 @@ enum class EventType {
     ToggleWireframeView,
     SetMSAA,
     SetMouseSensitivity,
+    AddNewRenderable,
+    ChunkDataGenerated,
 
     /* Keyboard events */
     KeyPressed,

@@ -4,8 +4,11 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include "pch.h"
+#include "utils/Logger.h"
 
 std::unordered_set<Renderable*> Renderable::m_RenderablesToDraw;
+
+Renderable::~Renderable() { LOG_TRACE("Destroy renderable"); }
 
 void Renderable::Register() {
     // Create Vertex Buffer Object & Element Buffer Object
@@ -22,17 +25,19 @@ void Renderable::Register() {
 
     m_RenderablesToDraw.insert(this);
 
-    m_Registered = true;
+    m_Registered.store(true, std::memory_order_release);
 }
 
 void Renderable::Unregister() {
     m_RenderablesToDraw.erase(this);
-    m_Registered = false;
+    m_Registered.store(false, std::memory_order_release);
 }
 
 bool Renderable::IsRegistered() { return m_Registered; }
 
 void Renderable::AddFaceToIndices() {
+    std::lock_guard<std::mutex> lock(m_Mutex);
+
     int indexStart = 0;
 
     if (m_Indices.size() != 0) {

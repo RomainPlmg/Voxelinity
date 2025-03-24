@@ -4,6 +4,7 @@
 #include <atomic>
 #include <glm/glm.hpp>
 #include <memory>
+#include <mutex>
 #include <unordered_set>
 #include <vector>
 
@@ -15,7 +16,7 @@ class VertexArray;
 class Renderable {
    public:
     Renderable(const glm::vec3& position, int ID = 0) : m_Position(position), m_ID(0) { m_RenderablesToDraw.reserve(500); }
-    virtual ~Renderable() = default;
+    virtual ~Renderable();
 
     virtual void Update() = 0;
     void Register();
@@ -46,6 +47,8 @@ class Renderable {
     glm::mat4 m_ModelMatrix = glm::mat4(1.0f);
 
     std::shared_ptr<ShaderProgram> m_Shader;
+
+    std::mutex m_Mutex;
     std::vector<float> m_Vertices;
     std::vector<uint32_t> m_Indices;
 

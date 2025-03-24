@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <shared_mutex>
 
 #include "Event.h"
 
@@ -29,6 +30,9 @@ class EventDispatcher {
 
    private:
     std::unordered_map<EventCategory, std::vector<Listener>> m_Listeners;
+    mutable std::shared_mutex m_Mutex;
+
+    static std::shared_mutex s_InitMutex;
 };
 
 #endif  // __EVENTDISPATCHER_H__

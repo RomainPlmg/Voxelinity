@@ -79,17 +79,22 @@ void Chunk::GenerateData(const FastNoiseLite& noise) {
                     boundaryIndex++;
                 }
 
+                if (y == 0) {
+                    m_Voxels[index]->SetFaceInvisible(Voxel::Face::Bottom);
+                }
+
                 if (y > height) {
                     m_Voxels[index]->SetTransparent(true);
                 }
             }
         }
     }
-    m_DataGenerated = true;
+    m_DataGenerated.store(true, std::memory_order_release);
+    ChunkDataGeneratedEvent event = ChunkDataGeneratedEvent();
+    EventDispatcher::Get().Dispatch(event);
 }
 
 void Chunk::GenerateMesh() {
-    RemoveInternalFaces();
     for (auto& voxel : m_Voxels) {
         if (voxel->IsTransparent()) continue;
 
@@ -114,14 +119,19 @@ void Chunk::GenerateMesh() {
             }
 
             // Write the new vertices into the final vertex buffer
-            m_Vertices.insert(m_Vertices.end(), movedVertices.begin(), movedVertices.end());
+            {
+                std::lock_guard<std::mutex> lock(m_Mutex);
+                m_Vertices.insert(m_Vertices.end(), movedVertices.begin(), movedVertices.end());
+            }
 
             // Update the element buffer
             AddFaceToIndices();
         }
     }
 
-    m_MeshGenerated = true;
+    m_MeshGenerated.store(true, std::memory_order_release);
+    AddNewRenderableEvent event(this);
+    EventDispatcher::Get().Dispatch(event);
 }
 
 void Chunk::Unload() {
@@ -186,6 +196,42 @@ void Chunk::RemoveInternalFaces() {
                         voxel->SetFaceInvisible(face);
                     }
                 }
+            }
+        }
+    }
+}
+
+void Chunk::RemoveBoundaryFaces(std::array<std::shared_ptr<Chunk>, 4> neighbors) {
+    glm::vec3 chunkPosition = m_Position;
+    chunkPosition.x /= CHUNK_WIDTH;
+    chunkPosition.z /= CHUNK_WIDTH;
+
+    for (auto& voxel : m_BoundaryVoxels) {
+        if (voxel == nullptr) {
+            LOG_ERROR("Cannot remove boundary faces, boundary voxel is nullptr.");
+            continue;
+        }
+        auto voxelPosition = voxel->GetPosition();
+        if (voxelPosition.x == 0 && neighbors[X_NEG]) {
+            auto neighborVoxel = neighbors[X_NEG]->GetVoxelatCoord(glm::vec3(CHUNK_WIDTH - 1, voxelPosition.y, voxelPosition.z));
+            if (neighborVoxel != nullptr && !neighborVoxel->IsTransparent()) {
+                voxel->SetFaceInvisible(Voxel::Face::Left);
+            }
+        } else if (voxelPosition.x == CHUNK_WIDTH - 1 && neighbors[X_POS]) {
+            auto neighborVoxel = neighbors[X_POS]->GetVoxelatCoord(glm::vec3(0, voxelPosition.y, voxelPosition.z));
+            if (neighborVoxel != nullptr && !neighborVoxel->IsTransparent()) {
+                voxel->SetFaceInvisible(Voxel::Face::Right);
+            }
+        }
+        if (voxelPosition.z == CHUNK_WIDTH - 1 && neighbors[Z_POS]) {
+            auto neighborVoxel = neighbors[Z_POS]->GetVoxelatCoord(glm::vec3(voxelPosition.x, voxelPosition.y, 0));
+            if (neighborVoxel != nullptr && !neighborVoxel->IsTransparent()) {
+                voxel->SetFaceInvisible(Voxel::Face::Front);
+            }
+        } else if (voxelPosition.z == 0 && neighbors[Z_NEG]) {
+            auto neighborVoxel = neighbors[Z_NEG]->GetVoxelatCoord(glm::vec3(voxelPosition.x, voxelPosition.y, CHUNK_WIDTH - 1));
+            if (neighborVoxel != nullptr && !neighborVoxel->IsTransparent()) {
+                voxel->SetFaceInvisible(Voxel::Face::Back);
             }
         }
     }

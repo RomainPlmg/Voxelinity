@@ -2,6 +2,7 @@
 #define __EVENTAPPLICATION_H__
 
 #include "Event.h"
+#include "gfx/Renderable.h"
 
 class ApplicationEvent : public Event {
     EVENT_CLASS_CATEGORY(EventCategoryApplication)
@@ -118,18 +119,49 @@ class ToggleWireframeViewEvent final : public ApplicationEvent {
 };
 
 class SetMouseSensitivityEvent final : public ApplicationEvent {
-    public:
-     float value;
+   public:
+    float value;
 
-     SetMouseSensitivityEvent(float value) : value(value) {}
+    SetMouseSensitivityEvent(float value) : value(value) {}
 
-     EVENT_CLASS_TYPE(EventType::SetMouseSensitivity)
+    EVENT_CLASS_TYPE(EventType::SetMouseSensitivity)
 
-     std::string ToString() const override {
+    std::string ToString() const override {
         std::stringstream ss;
         ss << "Mouse sensitivity = " << value;
         return ss.str();
-    }  
+    }
+};
+
+class AddNewRenderableEvent final : public ApplicationEvent {
+   public:
+    const Renderable* GetRenderable() const { return m_Renderable; }
+
+    AddNewRenderableEvent(Renderable* renderable) : m_Renderable(renderable) {}
+
+    EVENT_CLASS_TYPE(EventType::AddNewRenderable);
+
+    std::string ToString() const override {
+        std::stringstream ss;
+        ss << "Add renderable ID = " << m_Renderable->GetID();
+        return ss.str();
+    }
+
+   private:
+    Renderable* m_Renderable;
+};
+
+class ChunkDataGeneratedEvent final : public ApplicationEvent {
+   public:
+    ChunkDataGeneratedEvent() {}
+
+    EVENT_CLASS_TYPE(EventType::ChunkDataGenerated);
+
+    std::string ToString() const override {
+        std::stringstream ss;
+        ss << "Chunk data generated";
+        return ss.str();
+    }
 };
 
 #endif  // __EVENTAPPLICATION_H__
