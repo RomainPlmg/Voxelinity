@@ -11,13 +11,14 @@ std::unordered_set<Renderable*> Renderable::m_RenderablesToDraw;
 Renderable::~Renderable() { LOG_TRACE("Destroy renderable"); }
 
 void Renderable::Register() {
+    // Create Vertex Array Object
+    m_VAO = VertexArray::Create();
+
     // Create Vertex Buffer Object & Element Buffer Object
     m_VBO = VertexBuffer::Create(m_Vertices.data(), m_Vertices.size() * sizeof(float));
     m_VBO->SetLayout(m_Shader->GetBufferLayout());
     m_EBO = ElementBuffer::Create(m_Indices.data(), m_Indices.size());
 
-    // Create Vertex Array Object
-    m_VAO = VertexArray::Create();
     m_VAO->AddVertexBuffer(m_VBO);
     m_VAO->AddElementBuffer(m_EBO);
 
