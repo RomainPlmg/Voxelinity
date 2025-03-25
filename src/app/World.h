@@ -10,10 +10,12 @@
 #include <unordered_set>
 
 #include "ChunkManager.h"
+#include "CollisionManager.h"
 #include "Player.h"
 
 class Renderable;
 class Event;
+class Voxel;
 
 struct WorldStatus {
     glm::vec3 playerPos;
@@ -33,6 +35,7 @@ class World {
 
     /* Getters */
     const Player& GetPlayer() const { return m_Player; }
+    Voxel* GetVoxel(glm::vec3 pos) const;
 
     static const WorldStatus& GetStatus() { return m_Status; }
     static std::unique_ptr<World> Create();
@@ -41,6 +44,7 @@ class World {
     bool m_IsPaused;
     Player m_Player;
     ChunkManager m_ChunkManager;
+    CollisionManager m_CollisionManager;
 
     static WorldStatus m_Status;
 };

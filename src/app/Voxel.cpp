@@ -6,7 +6,10 @@
 #include "gfx/VertexArray.h"
 #include "pch.h"
 
-Voxel::Voxel(glm::vec3 position) : m_Position(position), m_IsTransparent(false), m_FaceToRender(0b00111111) {}
+Voxel::Voxel(glm::vec3 position) : m_Position(position), m_IsTransparent(false), m_FaceToRender(0b00111111) {
+    m_BoundingBox.Resize(glm::vec3(1.0f, 1.0f, 1.0f));
+    m_BoundingBox.Move(glm::vec3(m_Position.x + 0.5f, m_Position.y + 0.5f, m_Position.z + 0.5f));
+}
 
 void Voxel::Update() {}
 

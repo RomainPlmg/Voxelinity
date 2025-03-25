@@ -6,7 +6,7 @@
 #include "events/EventDispatcher.h"
 #include "gfx/Shader.h"
 
-ChunkManager::ChunkManager() : m_RenderDistance(16), m_NbChunksWithData(0) {
+ChunkManager::ChunkManager() : m_RenderDistance(8), m_NbChunksWithData(0) {
     EventDispatcher::Get().Subscribe(EventCategory::EventCategoryApplication, BIND_EVENT_FN(ChunkManager::OnEvent));
 }
 
@@ -92,5 +92,15 @@ void ChunkManager::OnEvent(const Event& event) {
     }
     if (event.GetType() == EventType::ChunkDataGenerated) {
         m_NbChunksWithData++;
+    }
+}
+
+Chunk* ChunkManager::GetChunk(glm::ivec3 pos) const {
+    auto it = m_Chunks.find(pos);
+    if (it == m_Chunks.end()) {
+        LOG_ERROR("Can't access chunk at position {0} | {1} | {2}", pos.x, pos.y, pos.z);
+        return nullptr;  // Chunk not found
+    } else {
+        return it->second.get();
     }
 }

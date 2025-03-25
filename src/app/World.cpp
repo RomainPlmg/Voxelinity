@@ -12,7 +12,7 @@
 
 WorldStatus World::m_Status;
 
-World::World() : m_IsPaused(false) {}
+World::World() : m_IsPaused(false), m_CollisionManager(m_Player, *this) {}
 
 World::~World() {}
 
@@ -25,6 +25,7 @@ void World::Init() {
 
 void World::Update() {
     m_ChunkManager.Update();
+    m_CollisionManager.Update();
 
     if (m_IsPaused) return;
 
@@ -47,6 +48,31 @@ void World::OnEvent(const Event& event) {
         const auto* pauseEvent = dynamic_cast<const PauseEvent*>(&event);
         m_IsPaused = pauseEvent->isPaused;
     }
+}
+
+Voxel* World::GetVoxel(glm::vec3 pos) const {
+    if (pos.y > CHUNK_HEIGHT - 1 || pos.y < 0) return nullptr;
+
+    glm::ivec3 chunkPos;
+    chunkPos.x = static_cast<int>(pos.x) / CHUNK_WIDTH;
+    chunkPos.y = 0;
+    chunkPos.z = static_cast<int>(pos.z) / CHUNK_WIDTH;
+
+    glm::vec3 localPos;
+    localPos.x = (static_cast<int>(pos.x) % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
+    localPos.y = pos.y;
+    localPos.z = (static_cast<int>(pos.z) % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
+
+    // LOG_TRACE("CHECK CUBE {0} | {1} | {2}", localPos.x, localPos.y, localPos.z);
+
+    Chunk* chunk = m_ChunkManager.GetChunk(chunkPos);
+    if (chunk) {
+        Voxel* voxel = chunk->GetVoxelatCoord(localPos);
+        if (voxel) {
+            return voxel;
+        }
+    }
+    return nullptr;
 }
 
 std::unique_ptr<World> World::Create() { return std::make_unique<World>(); }

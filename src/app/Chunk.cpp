@@ -253,7 +253,7 @@ int Chunk::GetVoxelIndex(const glm::vec3& coord) { return coord.y + (coord.x * C
 Voxel* Chunk::GetVoxelatCoord(const glm::vec3& coord) {
     int index = GetVoxelIndex(coord);
     if (index >= CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT || index < 0) {
-        LOG_WARNING("Cube at position xyz: {0}|{1}|{2} is out of bounds of the chunk", coord.x, coord.y, coord.z);
+        LOG_WARNING("Cube at position xyz: {0} | {1} | {2} is out of bounds of the chunk", coord.x, coord.y, coord.z);
         return nullptr;
     }
     return m_Voxels[index];

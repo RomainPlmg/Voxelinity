@@ -25,6 +25,9 @@ class ChunkManager {
 
     void OnEvent(const Event& event);
 
+    /* Getters */
+    Chunk* GetChunk(glm::ivec3 pos) const;
+
     /* Setters */
     void SetRenderDistance(int distance) { m_RenderDistance = distance; }
 
