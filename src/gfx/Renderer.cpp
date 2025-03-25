@@ -63,11 +63,11 @@ void Renderer::Render() {
         if (m_LastShader != shader.get()) {  // First pass
             if (m_LastShader) m_LastShader->Unbind();
             shader->Bind();
-            shader->GetUniform("projMatrix")->SetValue(m_ProjMatrix);
             m_LastShader = shader.get();
         }
 
         // Setup the camera & projection matrix
+        shader->GetUniform("projMatrix")->SetValue(m_ProjMatrix);
         shader->GetUniform("viewMatrix")->SetValue(viewMatrix);
         shader->GetUniform("modelMatrix")->SetValue(modelMatrix);  // Update the uniform value
 
