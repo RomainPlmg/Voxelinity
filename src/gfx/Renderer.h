@@ -10,6 +10,8 @@
 class Renderable;
 class Camera;
 class Event;
+class ShaderProgram;
+class VertexArray;
 
 class Renderer {
    public:
@@ -38,6 +40,9 @@ class Renderer {
     glm::mat4 m_ProjMatrix;
     int m_DrawCalls;
     int m_NbTrianglesRendered;
+
+    ShaderProgram* m_LastShader;
+    VertexArray* m_LastVAO;
 };
 
 #endif  // __RENDERER_H__

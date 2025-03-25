@@ -12,7 +12,8 @@
 #include "pch.h"
 #include "utils/Logger.h"
 
-Renderer::Renderer(int width, int height) : m_Camera(nullptr), m_DrawCalls(0), m_NbTrianglesRendered(0), m_StateGuard() {
+Renderer::Renderer(int width, int height)
+    : m_Camera(nullptr), m_DrawCalls(0), m_NbTrianglesRendered(0), m_StateGuard(), m_LastShader(nullptr), m_LastVAO(nullptr) {
     float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
     m_ProjMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 300.0f);
 }
@@ -44,36 +45,38 @@ void Renderer::Render() {
         const auto& vao = renderable->GetVAO();
         const auto& shader = renderable->GetShader();
         const auto& modelMatrix = renderable->GetModelMatrix();
+        glm::mat4 viewMatrix = (m_Camera) ? m_Camera->GetViewMatrix() : glm::mat4(1.0f);
 
         m_NbTrianglesRendered += ebo->GetCount() / 3;
 
+        // Sanity checks
         if (shader == nullptr) {
             LOG_ERROR("The shader is nullptr for the renderable '{0}'", renderable->GetID());
             continue;
         }
-        shader->GetUniform("modelMatrix")->SetValue(modelMatrix);
-        if (m_Camera == nullptr) {
-            LOG_WARNING("No camera provided to the renderer");
-            shader->GetUniform("viewMatrix")->SetValue(glm::mat4(1.0f));
-        } else {
-            shader->GetUniform("viewMatrix")->SetValue(m_Camera->GetViewMatrix());
-        }
-        shader->GetUniform("projMatrix")->SetValue(m_ProjMatrix);
-
         if (vao == nullptr) {
             LOG_ERROR("The vertex array is nullptr for the renderable '{0}'", renderable->GetID());
             continue;
         }
 
         // Setup the shader
-        shader->Bind();
+        if (m_LastShader != shader.get()) {  // First pass
+            if (m_LastShader) m_LastShader->Unbind();
+            shader->Bind();
+            shader->GetUniform("projMatrix")->SetValue(m_ProjMatrix);
+            m_LastShader = shader.get();
+        }
+
+        // Setup the camera & projection matrix
+        shader->GetUniform("viewMatrix")->SetValue(viewMatrix);
+        shader->GetUniform("modelMatrix")->SetValue(modelMatrix);  // Update the uniform value
 
         // Set the uniforms
         for (auto& [name, uniform] : shader->GetUniforms()) {
             if (uniform->type == ShaderDataType::Bool) {
                 shader->SetUniformBool(name, uniform->GetValue<bool>());
             } else if (uniform->type == ShaderDataType::Int) {
-                shader->SetUniformFloat(name, uniform->GetValue<int>());
+                shader->SetUniformInt(name, uniform->GetValue<int>());
             } else if (uniform->type == ShaderDataType::Float) {
                 shader->SetUniformFloat(name, uniform->GetValue<float>());
             } else if (uniform->type == ShaderDataType::Float3) {
@@ -83,24 +86,15 @@ void Renderer::Render() {
             }
         }
 
-        shader->SetUniformMat4("modelMatrix", modelMatrix);
-        if (m_Camera == nullptr) {
-            LOG_WARNING("No camera provided to the renderer");
-            shader->SetUniformMat4("viewMatrix", glm::mat4(1.0f));
-        } else {
-            shader->SetUniformMat4("viewMatrix", m_Camera->GetViewMatrix());
+        // Setup the VAO
+        if (m_LastVAO != vao.get()) {
+            if (m_LastVAO) m_LastVAO->Unbind();
+            vao->Bind();
+            m_LastVAO = vao.get();
         }
-        shader->SetUniformMat4("projMatrix", m_ProjMatrix);
-
-        // Bind the vertex array
-        vao->Bind();
 
         // Draw element
         glDrawElements(GL_TRIANGLES, ebo->GetCount(), GL_UNSIGNED_INT, nullptr);
-
-        // Undind resources
-        vao->Unbind();
-        shader->Unbind();
 
         // Increase number of drawcalls
         m_DrawCalls++;
