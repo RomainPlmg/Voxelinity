@@ -6,6 +6,8 @@
 
 #include "gfx/Camera.h"
 
+constexpr int PLAYER_MAX_SPEED = 10.0f;
+
 class Player {
    public:
     Player();
@@ -23,7 +25,8 @@ class Player {
 
    private:
     glm::vec3 m_Position;
-    float m_Velocity;
+    glm::vec3 m_FyingVelocity;
+    float m_FlyingAcceleration;
 
     Camera m_Camera;
 };
