@@ -15,7 +15,7 @@
 Renderer::Renderer(int width, int height)
     : m_Camera(nullptr), m_DrawCalls(0), m_NbTrianglesRendered(0), m_StateGuard(), m_LastShader(nullptr), m_LastVAO(nullptr) {
     float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-    m_ProjMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 300.0f);
+    m_ProjMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 1000.0f);
 }
 
 void Renderer::Init() {
@@ -116,7 +116,7 @@ void Renderer::OnEvent(const Event& event) {
 
 void Renderer::SetViewport(const int width, const int height) {
     float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-    m_ProjMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 300.0f);
+    m_ProjMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 1000.0f);
     glViewport(0, 0, width, height);
 }
 
