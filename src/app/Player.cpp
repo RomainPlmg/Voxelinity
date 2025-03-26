@@ -24,9 +24,8 @@ void Player::Update() {
     if (Input::IsKeyPressed(GLFW_KEY_S)) accelerationDir -= frontXZ;
     if (Input::IsKeyPressed(GLFW_KEY_A)) accelerationDir -= rightXZ;
     if (Input::IsKeyPressed(GLFW_KEY_D)) accelerationDir += rightXZ;
-    if (Input::IsKeyPressed(GLFW_KEY_SPACE)) m_FyingVelocity = glm::vec3(0.0f, 1.0f, 0.0f) * 30.0f * static_cast<float>(Time::Get().GetDeltaTime());
-    if (Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT))
-        m_FyingVelocity = -glm::vec3(0.0f, 1.0f, 0.0f) * 30.0f * static_cast<float>(Time::Get().GetDeltaTime());
+    if (Input::IsKeyPressed(GLFW_KEY_SPACE)) Move(glm::vec3(0.0f, 1.0f, 0.0f) * 30.0f * static_cast<float>(Time::Get().GetDeltaTime()));
+    if (Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT)) Move(-glm::vec3(0.0f, 1.0f, 0.0f) * 30.0f * static_cast<float>(Time::Get().GetDeltaTime()));
 
     if (glm::length(accelerationDir) > 0.0f) {
         accelerationDir = glm::normalize(accelerationDir);
@@ -34,7 +33,7 @@ void Player::Update() {
     }
 
     if (glm::length(m_FyingVelocity)) {
-        m_FyingVelocity -= m_FyingVelocity * acc;
+        m_FyingVelocity -= m_FyingVelocity * acc * 2.0f;
     }
 
     if (glm::length(m_FyingVelocity) > PLAYER_MAX_SPEED) {
