@@ -1,6 +1,7 @@
 #include "World.h"
 
 #include "Chunk.h"
+#include "CollisionManager.h"
 #include "core/ThreadPool.h"
 #include "events/EventApplication.h"
 #include "events/EventDispatcher.h"
@@ -12,7 +13,7 @@
 
 WorldStatus World::m_Status;
 
-World::World() : m_IsPaused(false), m_CollisionManager(m_Player, *this) {}
+World::World() : m_IsPaused(false), m_CollisionManager(*this, m_Player) {}
 
 World::~World() {}
 
@@ -50,7 +51,7 @@ void World::OnEvent(const Event& event) {
     }
 }
 
-Voxel* World::GetVoxel(glm::vec3 pos) const {
+Voxel* World::GetVoxel(const glm::vec3& pos) const {
     if (pos.y > CHUNK_HEIGHT - 1 || pos.y < 0) return nullptr;
 
     glm::ivec3 chunkPos;
@@ -58,12 +59,10 @@ Voxel* World::GetVoxel(glm::vec3 pos) const {
     chunkPos.y = 0;
     chunkPos.z = static_cast<int>(pos.z) / CHUNK_WIDTH;
 
-    glm::vec3 localPos;
+    glm::uvec3 localPos;
     localPos.x = (static_cast<int>(pos.x) % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
     localPos.y = pos.y;
     localPos.z = (static_cast<int>(pos.z) % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
-
-    // LOG_TRACE("CHECK CUBE {0} | {1} | {2}", localPos.x, localPos.y, localPos.z);
 
     Chunk* chunk = m_ChunkManager.GetChunk(chunkPos);
     if (chunk) {

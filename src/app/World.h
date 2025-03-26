@@ -35,7 +35,7 @@ class World {
 
     /* Getters */
     const Player& GetPlayer() const { return m_Player; }
-    Voxel* GetVoxel(glm::vec3 pos) const;
+    Voxel* GetVoxel(const glm::vec3& pos) const;
 
     static const WorldStatus& GetStatus() { return m_Status; }
     static std::unique_ptr<World> Create();

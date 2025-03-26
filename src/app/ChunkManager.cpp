@@ -6,7 +6,7 @@
 #include "events/EventDispatcher.h"
 #include "gfx/Shader.h"
 
-ChunkManager::ChunkManager() : m_RenderDistance(8), m_NbChunksWithData(0) {
+ChunkManager::ChunkManager() : m_RenderDistance(4), m_NbChunksWithData(0) {
     EventDispatcher::Get().Subscribe(EventCategory::EventCategoryApplication, BIND_EVENT_FN(ChunkManager::OnEvent));
 }
 

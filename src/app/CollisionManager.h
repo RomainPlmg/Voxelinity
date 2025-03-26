@@ -1,12 +1,14 @@
 #ifndef __COLLISION_MANAGER_H__
 #define __COLLISION_MANAGER_H__
 
+#include "utils/Box.h"
+
 class Player;
 class World;
 
 class CollisionManager {
    public:
-    CollisionManager(Player& player, World& world);
+    CollisionManager(World& world, Player& player);
 
     void Update();
     void Enable() { m_Enable = true; }
@@ -14,9 +16,10 @@ class CollisionManager {
 
    private:
     bool m_Enable;
-
-    Player& m_Player;
     World& m_World;
+    Player& m_Player;
+
+    void ResolveCollision(const Box& entityBox, const Box& other);
 };
 
 #endif  // __COLLISION_MANAGER_H__

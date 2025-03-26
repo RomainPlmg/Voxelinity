@@ -40,7 +40,7 @@ class Chunk : public Renderable {
     void OnEvent(const Event& event);
 
     /* Getters */
-    const glm::ivec3& GetWorldPosition() const {
+    glm::ivec3 GetWorldPosition() const {
         return glm::ivec3((int)m_Position.x / CHUNK_WIDTH, (int)m_Position.y / CHUNK_HEIGHT, (int)m_Position.z / CHUNK_WIDTH);
     }
     const bool IsDataGenerated() const { return m_DataGenerated.load(std::memory_order_acquire); }

@@ -25,6 +25,7 @@ class Voxel {
     void SetTransparent(bool transparent);
     void SetFaceVisible(const Face face);
     void SetFaceInvisible(const Face face);
+    void SetBoundingBox(const Box& box);
 
    private:
     bool m_IsTransparent;

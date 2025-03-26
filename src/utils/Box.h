@@ -25,8 +25,8 @@ struct Box {
 
     // Test AABB collision
     bool IsColliding(const Box& collider) const {
-        return Xmin <= collider.Xmax && Xmax >= collider.Xmin && Ymin <= collider.Ymax && Ymax >= collider.Ymin && Zmin <= collider.Zmax &&
-               Zmax >= collider.Zmin;
+        return Xmin < collider.Xmax && Xmax > collider.Xmin && Ymin < collider.Ymax && Ymax > collider.Ymin && Zmin < collider.Zmax &&
+               Zmax > collider.Zmin;
     }
 };
 
