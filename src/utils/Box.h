@@ -4,29 +4,22 @@
 #include <glm/glm.hpp>
 
 struct Box {
-    float Xmin = 0.0f, Xmax = 0.0f;
-    float Ymin = 0.0f, Ymax = 0.0f;
-    float Zmin = 0.0f, Zmax = 0.0f;
+    glm::vec3 min;  // Lower left corner
+    glm::vec3 max;  // Upper right corner
 
-    void Resize(const glm::vec3& scale) {
-        Xmax = scale.x;
-        Ymax = scale.y;
-        Zmax = scale.z;
+    Box(const glm::vec3& position, const glm::vec3& size) : min(position), max(position + size) {}
+
+    // Update box position
+    void SetPosition(const glm::vec3& position) {
+        glm::vec3 size = max - min;
+        min = position;
+        max = position + size;
     }
 
-    void Move(const glm::vec3& delta) {
-        Xmin += delta.x;
-        Xmax += delta.x;
-        Ymin += delta.y;
-        Ymax += delta.y;
-        Zmin += delta.z;
-        Zmax += delta.z;
-    }
-
-    // Test AABB collision
-    bool IsColliding(const Box& collider) const {
-        return Xmin < collider.Xmax && Xmax > collider.Xmin && Ymin < collider.Ymax && Ymax > collider.Ymin && Zmin < collider.Zmax &&
-               Zmax > collider.Zmin;
+    // Checks if this box collides with another box
+    bool Intersects(const Box& other) const {
+        return (min.x <= other.max.x && max.x >= other.min.x) && (min.y <= other.max.y && max.y >= other.min.y) &&
+               (min.z <= other.max.z && max.z >= other.min.z);
     }
 };
 
