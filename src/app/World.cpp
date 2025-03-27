@@ -54,15 +54,19 @@ void World::OnEvent(const Event& event) {
 Voxel* World::GetVoxel(const glm::vec3& pos) const {
     if (pos.y > CHUNK_HEIGHT - 1 || pos.y < 0) return nullptr;
 
+    // LOG_TRACE("World pos = {0} | {1} | {2}", pos.x, pos.y, pos.z);
+
     glm::ivec3 chunkPos;
-    chunkPos.x = static_cast<int>(pos.x) / CHUNK_WIDTH;
+    chunkPos.x = (pos.x < 0) ? ((static_cast<int>(pos.x) - CHUNK_WIDTH + 1) / CHUNK_WIDTH) : (static_cast<int>(pos.x) / CHUNK_WIDTH);
     chunkPos.y = 0;
-    chunkPos.z = static_cast<int>(pos.z) / CHUNK_WIDTH;
+    chunkPos.z = (pos.z < 0) ? ((static_cast<int>(pos.z) - CHUNK_WIDTH + 1) / CHUNK_WIDTH) : (static_cast<int>(pos.z) / CHUNK_WIDTH);
 
     glm::uvec3 localPos;
     localPos.x = (static_cast<int>(pos.x) % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
     localPos.y = pos.y;
     localPos.z = (static_cast<int>(pos.z) % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
+
+    // LOG_TRACE("Local pos = {0} | {1} | {2}", localPos.x, localPos.y, localPos.z);
 
     Chunk* chunk = m_ChunkManager.GetChunk(chunkPos);
     if (chunk) {
