@@ -21,9 +21,11 @@ class Player {
     const Camera& GetCamera() const { return m_Camera; }
     const glm::vec3 GetPosition() const { return m_Position; }
     const Box& GetBoundingBox() const { return m_BoundingBox; }
+    const glm::vec3& GetVelocityVector() const { return m_FyingVelocity; }
 
     /* Setters */
-    void SetPosition(glm::vec3 position) { m_Position = position; }
+    void SetPosition(const glm::vec3& position) { m_Position = position; }
+    void SetVelocity(const glm::vec3& velocity) { m_FyingVelocity = velocity; }
 
    private:
     glm::vec3 m_Position;

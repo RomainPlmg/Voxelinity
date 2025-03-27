@@ -6,7 +6,8 @@
 #include "gfx/VertexArray.h"
 #include "pch.h"
 
-Voxel::Voxel(glm::vec3 position) : m_Position(position), m_IsTransparent(false), m_FaceToRender(0b00111111) {}
+Voxel::Voxel(glm::vec3 position)
+    : m_Position(position), m_IsTransparent(false), m_FaceToRender(0b00111111), m_BoundingBox(glm::vec3(0.0f), glm::vec3(1.0f)) {}
 
 void Voxel::Update() {}
 

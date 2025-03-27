@@ -74,9 +74,7 @@ void Chunk::GenerateData(const FastNoiseLite& noise) {
                 m_Voxels[index] = new Voxel(cubePos);
 
                 // Setup the voxel bounding box
-                Box voxelBox;
-                voxelBox.Resize(glm::vec3(1.0f, 1.0f, 1.0f));
-                voxelBox.Move(glm::vec3(m_Position.x + cubePos.x - 0.5f, m_Position.y + cubePos.y - 0.5f, m_Position.z + cubePos.z - 0.5f));
+                Box voxelBox(m_Position + cubePos - 0.5f, glm::vec3(1.0f));
                 m_Voxels[index]->SetBoundingBox(voxelBox);
 
                 // Check if voxel is at boundary

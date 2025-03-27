@@ -29,7 +29,7 @@ void CollisionManager::Update() {
                 Voxel* voxel = m_World.GetVoxel(glm::vec3(x, y, z));
                 if (voxel && !voxel->IsTransparent()) {
                     Box other = voxel->GetBoundingBox();
-                    if (entityBox.IsColliding(other)) {
+                    if (entityBox.Intersects(other)) {
                         ResolveCollision(entityBox, other);
                         LOG_TRACE("COLLISION");
                     }
@@ -39,29 +39,4 @@ void CollisionManager::Update() {
     }
 }
 
-void CollisionManager::ResolveCollision(const Box& entityBox, const Box& other) {
-    glm::vec3 delta(0.0f);
-
-    // X axis
-    if (entityBox.Xmax >= other.Xmin) {  // Too far to the right
-        delta.x = -(entityBox.Xmax - other.Xmin);
-    } else if (entityBox.Xmin <= other.Xmax) {  // Too far to the left
-        delta.x = other.Xmax - entityBox.Xmin;
-    }
-
-    // Y axis
-    if (entityBox.Ymax >= other.Ymin) {  // Too far to the top
-        delta.y = -(entityBox.Ymax - other.Ymin);
-    } else if (entityBox.Ymin <= other.Ymax) {  // Too far to the bottom
-        delta.y = other.Ymax - entityBox.Ymin;
-    }
-
-    // Z axis
-    if (entityBox.Zmax >= other.Zmin) {  // Too far to the front
-        delta.z = -(entityBox.Zmax - other.Zmin);
-    } else if (entityBox.Zmin <= other.Zmax) {  // Too far to the back
-        delta.z = other.Zmax - entityBox.Zmin;
-    }
-
-    m_Player.Move(delta);
-}
+void CollisionManager::ResolveCollision(const Box& entityBox, const Box& other) {}
