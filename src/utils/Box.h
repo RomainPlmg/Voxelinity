@@ -10,10 +10,9 @@ struct Box {
     Box(const glm::vec3& position, const glm::vec3& size) : min(position), max(position + size) {}
 
     // Update box position
-    void SetPosition(const glm::vec3& position) {
-        glm::vec3 size = max - min;
-        min = position;
-        max = position + size;
+    void Move(const glm::vec3& delta) {
+        min += delta;
+        max += delta;
     }
 
     // Checks if this box collides with another box
