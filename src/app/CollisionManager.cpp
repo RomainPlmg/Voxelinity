@@ -39,4 +39,28 @@ void CollisionManager::Update() {
     }
 }
 
-void CollisionManager::ResolveCollision(const Box& entityBox, const Box& other) {}
+void CollisionManager::ResolveCollision(const Box& entityBox, const Box& other) {
+    float RightPenetration = other.max.x - entityBox.min.x;
+    float LeftPenetration = entityBox.max.x - other.min.x;
+    float TopPenetration = other.max.y - entityBox.min.y;
+    float BottomPenetration = entityBox.max.y - other.min.y;
+    float FrontPenetration = other.max.z - entityBox.min.z;
+    float BackPenetration = entityBox.max.z - other.min.z;
+
+    float minPene = std::min({RightPenetration, LeftPenetration, TopPenetration, BottomPenetration, FrontPenetration, BackPenetration});
+
+    if (minPene == RightPenetration)
+        m_Player.Move(glm::vec3(RightPenetration, 0.0f, 0.0f));
+    else if (minPene == LeftPenetration)
+        m_Player.Move(glm::vec3(-LeftPenetration, 0.0f, 0.0f));
+    else if (minPene == TopPenetration)
+        m_Player.Move(glm::vec3(0.0f, TopPenetration, 0.0f));
+    else if (minPene == BottomPenetration)
+        m_Player.Move(glm::vec3(0.0f, -BottomPenetration, 0.0f));
+    else if (minPene == FrontPenetration)
+        m_Player.Move(glm::vec3(0.0f, 0.0f, FrontPenetration));
+    else if (minPene == BackPenetration)
+        m_Player.Move(glm::vec3(0.0f, 0.0f, -BackPenetration));
+
+    m_Player.SetVelocity(glm::vec3(0.0f));
+}
