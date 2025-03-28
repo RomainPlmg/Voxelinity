@@ -4,10 +4,7 @@
 #include "gfx/GraphicContext.h"
 #include "utils/Time.h"
 
-Player::Player()
-    : m_Position(glm::vec3(0)), m_FyingVelocity(0.0f), m_FlyingAcceleration(1.0f), m_BoundingBox(m_Position, glm::vec3(0.7f, 1.7f, 0.7f)) {
-    m_BoundingBox.SetPosition(glm::vec3(m_Position.x - 0.7f / 2.0f, m_Position.y - 1.7f, m_Position.z - 0.7f / 2.0f));
-}
+Player::Player() : Entity(glm::vec3(.7f, 1.7f, .7f), glm::vec3(.35f, 1.7f, .35f)) {}
 
 void Player::Init() { m_Camera.Init(); }
 
@@ -16,6 +13,7 @@ void Player::Update() {
     glm::vec3 frontXZ = glm::normalize(glm::vec3(m_Camera.GetFrontVector().x, 0.0f, m_Camera.GetFrontVector().z));
     glm::vec3 rightXZ = glm::normalize(glm::vec3(m_Camera.GetRightVector().x, 0.0f, m_Camera.GetRightVector().z));
 
+    float m_FlyingAcceleration = 2.0f;
     glm::vec3 accelerationDir(0.0f);
     float acc = m_FlyingAcceleration * static_cast<float>(Time::Get().GetDeltaTime());
 
@@ -28,25 +26,19 @@ void Player::Update() {
 
     if (glm::length(accelerationDir) > 0.0f) {
         accelerationDir = glm::normalize(accelerationDir);
-        m_FyingVelocity += accelerationDir * acc;
+        m_Velocity += accelerationDir * acc;
     }
 
-    if (glm::length(m_FyingVelocity)) {
-        m_FyingVelocity -= m_FyingVelocity * acc * 2.0f;
+    if (glm::length(m_Velocity)) {
+        m_Velocity -= m_Velocity * acc * 2.0f;
     }
 
-    if (glm::length(m_FyingVelocity) > PLAYER_MAX_SPEED) {
-        m_FyingVelocity = glm::normalize(m_FyingVelocity) * static_cast<float>(PLAYER_MAX_SPEED);
+    if (glm::length(m_Velocity) > PLAYER_MAX_SPEED) {
+        m_Velocity = glm::normalize(m_Velocity) * static_cast<float>(PLAYER_MAX_SPEED);
     }
 
-    Move(m_FyingVelocity);
+    Move(m_Velocity);
 
-    m_Camera.Update();
-}
-
-void Player::Move(glm::vec3 delta) {
-    glm::vec3 lastPosition = m_Position;
-    m_Position += delta;
-    m_BoundingBox.SetPosition(glm::vec3(m_Position.x - 0.7f / 2.0f, m_Position.y - 1.7f, m_Position.z - 0.7f / 2.0f));
     m_Camera.SetPosition(m_Position);
+    m_Camera.Update();
 }
