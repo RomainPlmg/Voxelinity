@@ -4,7 +4,10 @@
 #include "gfx/GraphicContext.h"
 #include "utils/Time.h"
 
-Player::Player() : m_Position(glm::vec3(0)), m_FyingVelocity(0.0f), m_FlyingAcceleration(1.0f), m_BoundingBox(m_Position, glm::vec3(1.0f)) {}
+Player::Player()
+    : m_Position(glm::vec3(0)), m_FyingVelocity(0.0f), m_FlyingAcceleration(1.0f), m_BoundingBox(m_Position, glm::vec3(0.7f, 1.7f, 0.7f)) {
+    m_BoundingBox.SetPosition(glm::vec3(m_Position.x - 0.7f / 2.0f, m_Position.y - 1.7f, m_Position.z - 0.7f / 2.0f));
+}
 
 void Player::Init() { m_Camera.Init(); }
 
@@ -44,6 +47,6 @@ void Player::Update() {
 void Player::Move(glm::vec3 delta) {
     glm::vec3 lastPosition = m_Position;
     m_Position += delta;
-    m_BoundingBox.SetPosition(m_Position);
+    m_BoundingBox.SetPosition(glm::vec3(m_Position.x - 0.7f / 2.0f, m_Position.y - 1.7f, m_Position.z - 0.7f / 2.0f));
     m_Camera.SetPosition(m_Position);
 }
