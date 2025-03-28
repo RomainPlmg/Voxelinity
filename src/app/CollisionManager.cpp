@@ -23,9 +23,9 @@ void CollisionManager::Update() {
     int minZ = std::floor(playerPos.z) - 1;
     int maxZ = std::ceil(playerPos.z) + 1;
 
-    for (int x = minX; x <= maxX; x++) {
-        for (int y = minY; y <= maxY; y++) {
-            for (int z = minZ; z <= maxZ; z++) {
+    for (int x = minX; x < maxX; x++) {
+        for (int y = minY; y < maxY; y++) {
+            for (int z = minZ; z < maxZ; z++) {
                 Voxel* voxel = m_World.GetVoxel(glm::vec3(x, y, z));
                 if (voxel && !voxel->IsTransparent()) {
                     Box other = voxel->GetBoundingBox();
@@ -61,6 +61,4 @@ void CollisionManager::ResolveCollision(const Box& entityBox, const Box& other) 
         m_Player.Move(glm::vec3(0.0f, 0.0f, FrontPenetration));
     else if (minPene == BackPenetration)
         m_Player.Move(glm::vec3(0.0f, 0.0f, -BackPenetration));
-
-    m_Player.SetVelocity(glm::vec3(0.0f));
 }
