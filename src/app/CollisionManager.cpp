@@ -5,7 +5,6 @@
 #include "World.h"
 #include "pch.h"
 #include "utils/Box.h"
-#include "utils/Logger.h"
 
 CollisionManager::CollisionManager(World& world, Player& player) : m_Enable(true), m_World(world), m_Player(player) {}
 
@@ -13,7 +12,7 @@ void CollisionManager::Update() {
     if (!m_Enable) return;
 
     glm::vec3 playerPos = m_Player.GetPosition();
-    auto& entityBox = m_Player.GetBoundingBox();
+    auto entityBox = m_Player.GetBoundingBox();
 
     // Convert player position to voxel coordinates [3*3*3]
     int minX = std::floor(playerPos.x) - 1;
@@ -31,7 +30,6 @@ void CollisionManager::Update() {
                     Box other = voxel->GetBoundingBox();
                     if (entityBox.Intersects(other)) {
                         ResolveCollision(entityBox, other);
-                        LOG_TRACE("COLLISION");
                     }
                 }
             }
