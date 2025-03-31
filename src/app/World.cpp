@@ -13,7 +13,7 @@
 
 WorldStatus World::m_Status;
 
-World::World() : m_IsPaused(false), m_CollisionManager(*this, m_Player) {}
+World::World() : m_IsPaused(false), m_CollisionManager(*this) {}
 
 World::~World() {}
 
@@ -26,11 +26,13 @@ void World::Init() {
 
 void World::Update() {
     m_ChunkManager.Update();
-    m_CollisionManager.Update();
 
     if (m_IsPaused) return;
 
     m_Player.Update();
+    m_CollisionManager.Update();
+
+    m_Player.GetCamera().Update();
 
     // Update status
     m_Status.playerPos = m_Player.GetPosition();

@@ -3,12 +3,13 @@
 
 #include "utils/Box.h"
 
-class Player;
+class Entity;
+class Box;
 class World;
 
 class CollisionManager {
    public:
-    CollisionManager(World& world, Player& player);
+    CollisionManager(const World& world);
 
     void Update();
     void Enable() { m_Enable = true; }
@@ -16,10 +17,9 @@ class CollisionManager {
 
    private:
     bool m_Enable;
-    World& m_World;
-    Player& m_Player;
+    const World& m_World;
 
-    void ResolveCollision(const Box& entityBox, const Box& other);
+    void ResolveCollision(Entity& entity, const Box& other);
 };
 
 #endif  // __COLLISION_MANAGER_H__

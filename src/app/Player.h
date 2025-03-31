@@ -4,10 +4,12 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-#include "gfx/Camera.h"
 #include "Entity.h"
+#include "gfx/Camera.h"
 
 constexpr int PLAYER_MAX_SPEED = 10.0f;
+
+class Event;
 
 class Player : public Entity {
    public:
@@ -15,9 +17,11 @@ class Player : public Entity {
 
     void Init();
     void Update();
+    void Move(const glm::vec3& delta) override;
 
     /* Getters */
     const Camera& GetCamera() const { return m_Camera; }
+    Camera& GetCamera() { return m_Camera; }
 
    private:
     Camera m_Camera;

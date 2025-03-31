@@ -2,9 +2,10 @@
 
 #include "core/Input.h"
 #include "gfx/GraphicContext.h"
+#include "utils/Logger.h"
 #include "utils/Time.h"
 
-Player::Player() : Entity(glm::vec3(.7f, 1.7f, .7f), glm::vec3(.35f, 1.7f, .35f)) {}
+Player::Player() : Entity(glm::vec3(.7f, 1.7f, .7f), glm::vec3(.35f, 1.9f, .35f)) {}
 
 void Player::Init() { m_Camera.Init(); }
 
@@ -21,16 +22,21 @@ void Player::Update() {
     if (Input::IsKeyPressed(GLFW_KEY_S)) accelerationDir -= frontXZ;
     if (Input::IsKeyPressed(GLFW_KEY_A)) accelerationDir -= rightXZ;
     if (Input::IsKeyPressed(GLFW_KEY_D)) accelerationDir += rightXZ;
-    if (Input::IsKeyPressed(GLFW_KEY_SPACE)) Move(glm::vec3(0.0f, 1.0f, 0.0f) * 15.0f * static_cast<float>(Time::Get().GetDeltaTime()));
-    if (Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT)) Move(-glm::vec3(0.0f, 1.0f, 0.0f) * 15.0f * static_cast<float>(Time::Get().GetDeltaTime()));
+    if (Input::IsKeyPressed(GLFW_KEY_SPACE)) {
+        m_Velocity.y = 15.0f * static_cast<float>(Time::Get().GetDeltaTime());
+        m_Grounded = false;
+    }
+    if (Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT)) m_Velocity.y = !m_Grounded ? -15.0f * static_cast<float>(Time::Get().GetDeltaTime()) : 0.0f;
 
     if (glm::length(accelerationDir) > 0.0f) {
         accelerationDir = glm::normalize(accelerationDir);
-        m_Velocity += accelerationDir * acc;
+        m_Velocity.x += accelerationDir.x * acc;
+        m_Velocity.z += accelerationDir.z * acc;
     }
 
     if (glm::length(m_Velocity)) {
-        m_Velocity -= m_Velocity * acc * 2.0f;
+        m_Velocity.x -= m_Velocity.x * acc * 2.0f;
+        m_Velocity.z -= m_Velocity.z * acc * 2.0f;
     }
 
     if (glm::length(m_Velocity) > PLAYER_MAX_SPEED) {
@@ -39,6 +45,10 @@ void Player::Update() {
 
     Move(m_Velocity);
 
+    m_Velocity.y = 0.0f;
+}
+
+void Player::Move(const glm::vec3& delta) {
+    Entity::Move(delta);
     m_Camera.SetPosition(m_Position);
-    m_Camera.Update();
 }
