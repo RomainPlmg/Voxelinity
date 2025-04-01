@@ -11,40 +11,40 @@
 const std::unordered_map<Voxel::Face, std::array<float, 16>> Chunk::m_VoxelVertices = {
     //--- Position ---// // -Static illumination- //
 {Voxel::Face::Front, {
-    -0.5f, -0.5f,  0.5f,            0.8f,
-     0.5f, -0.5f,  0.5f,            0.8f,
-     0.5f,  0.5f,  0.5f,            0.8f,
-    -0.5f,  0.5f,  0.5f,            0.8f,
+    0.0f, 0.0f,  1.0f,              0.8f,
+    1.0f, 0.0f,  1.0f,              0.8f,
+    1.0f, 1.0f,  1.0f,              0.8f,
+    0.0f, 1.0f,  1.0f,              0.8f,
 }},           
 {Voxel::Face::Back, {           
-     0.5f, -0.5f, -0.5f,            0.8f,
-    -0.5f, -0.5f, -0.5f,            0.8f,
-    -0.5f,  0.5f, -0.5f,            0.8f,
-     0.5f,  0.5f, -0.5f,            0.8f,
+    1.0f, 0.0f, 0.0f,               0.8f,
+    0.0f, 0.0f, 0.0f,               0.8f,
+    0.0f, 1.0f, 0.0f,               0.8f,
+    1.0f, 1.0f, 0.0f,               0.8f,
 }},           
 {Voxel::Face::Left, {           
-    -0.5f, -0.5f, -0.5f,            0.8f,
-    -0.5f, -0.5f,  0.5f,            0.8f,
-    -0.5f,  0.5f,  0.5f,            0.8f,
-    -0.5f,  0.5f, -0.5f,            0.8f,
+    0.0f, 0.0f, 0.0f,               0.8f,
+    0.0f, 0.0f, 1.0f,               0.8f,
+    0.0f, 1.0f, 1.0f,               0.8f,
+    0.0f, 1.0f, 0.0f,               0.8f,
 }},           
 {Voxel::Face::Right, {           
-     0.5f, -0.5f,  0.5f,            0.8f,
-     0.5f, -0.5f, -0.5f,            0.8f,
-     0.5f,  0.5f, -0.5f,            0.8f,
-     0.5f,  0.5f,  0.5f,            0.8f,
+    1.0f, 0.0f, 1.0f,               0.8f,
+    1.0f, 0.0f, 0.0f,               0.8f,
+    1.0f, 1.0f, 0.0f,               0.8f,
+    1.0f, 1.0f, 1.0f,               0.8f,
 }},           
 {Voxel::Face::Top, {           
-    -0.5f,  0.5f,  0.5f,            1.0f,
-     0.5f,  0.5f,  0.5f,            1.0f,
-     0.5f,  0.5f, -0.5f,            1.0f,
-    -0.5f,  0.5f, -0.5f,            1.0f,
+    0.0f, 1.0f, 1.0f,               1.0f,
+    1.0f, 1.0f, 1.0f,               1.0f,
+    1.0f, 1.0f, 0.0f,               1.0f,
+    0.0f, 1.0f, 0.0f,               1.0f,
 }},           
 {Voxel::Face::Bottom, {           
-    -0.5f, -0.5f, -0.5f,            0.6f,
-     0.5f, -0.5f, -0.5f,            0.6f,
-     0.5f, -0.5f,  0.5f,            0.6f,
-    -0.5f, -0.5f,  0.5f,            0.6f,
+    0.0f, 0.0f, 0.0f,               0.6f,
+    1.0f, 0.0f, 0.0f,               0.6f,
+    1.0f, 0.0f, 1.0f,               0.6f,
+    0.0f, 0.0f, 1.0f,               0.6f,
 }}
 };
 // clang-format on
@@ -74,7 +74,7 @@ void Chunk::GenerateData(const FastNoiseLite& noise) {
                 m_Voxels[index] = new Voxel(cubePos);
 
                 // Setup the voxel bounding box
-                Box voxelBox(m_Position + cubePos - 0.5f, glm::vec3(1.0f));
+                Box voxelBox(m_Position + cubePos, glm::vec3(1.0f));
                 m_Voxels[index]->SetBoundingBox(voxelBox);
 
                 // Check if voxel is at boundary
