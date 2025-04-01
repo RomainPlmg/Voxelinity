@@ -26,6 +26,7 @@ enum class EventType {
     SetMouseSensitivity,
     AddNewRenderable,
     ChunkDataGenerated,
+    GodMode,
 
     /* Keyboard events */
     KeyPressed,

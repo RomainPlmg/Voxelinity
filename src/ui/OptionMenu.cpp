@@ -50,6 +50,16 @@ void OptionMenu::Show() {
         SetMouseSensitivityEvent event(mouseSensitivity);
         EventDispatcher::Get().Dispatch(event);
 
+        static bool godModeEnable = false;
+        ImGui::Checkbox("God mode", &godModeEnable);
+        if (godModeEnable) {
+            SetGodModeEvent event(true);
+            EventDispatcher::Get().Dispatch(event);
+        } else {
+            SetGodModeEvent event(false);
+            EventDispatcher::Get().Dispatch(event);
+        }
+
         if (ImGui::Button("Back")) {
             Close();
             if (m_ParentMenu != nullptr) m_ParentMenu->Open();

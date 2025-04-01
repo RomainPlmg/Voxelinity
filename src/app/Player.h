@@ -19,11 +19,14 @@ class Player : public Entity {
     void Update();
     void Move(const glm::vec3& delta) override;
 
+    void OnEvent(const Event& event);
+
     /* Getters */
     const Camera& GetCamera() const { return m_Camera; }
     Camera& GetCamera() { return m_Camera; }
 
    private:
+    bool m_GodMode;
     Camera m_Camera;
 };
 

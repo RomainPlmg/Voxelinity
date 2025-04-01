@@ -164,4 +164,22 @@ class ChunkDataGeneratedEvent final : public ApplicationEvent {
     }
 };
 
+class SetGodModeEvent final : public ApplicationEvent {
+    public:
+     bool god;
+ 
+     SetGodModeEvent(bool god) : god(god) {}
+ 
+     EVENT_CLASS_TYPE(EventType::GodMode)
+ 
+     std::string ToString() const override {
+         std::stringstream ss;
+         if (god)
+             ss << "God mode enable";
+         else
+             ss << "God mode disable";
+         return ss.str();
+     }
+ };
+
 #endif  // __EVENTAPPLICATION_H__
