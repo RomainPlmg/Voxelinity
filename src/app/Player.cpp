@@ -5,7 +5,7 @@
 #include "utils/Logger.h"
 #include "utils/Time.h"
 
-Player::Player() : Entity(glm::vec3(.7f, 1.7f, .7f), glm::vec3(.35f, 1.9f, .35f)) {}
+Player::Player() : Entity(glm::vec3(.7f, 1.9f, .7f), glm::vec3(.35f, 0.0f, .35f)) {}
 
 void Player::Init() { m_Camera.Init(); }
 
@@ -50,5 +50,7 @@ void Player::Update() {
 
 void Player::Move(const glm::vec3& delta) {
     Entity::Move(delta);
-    m_Camera.SetPosition(m_Position);
+    glm::vec3 camPos = m_Position;
+    camPos.y = m_Position.y + 1.9f;
+    m_Camera.SetPosition(camPos);
 }
