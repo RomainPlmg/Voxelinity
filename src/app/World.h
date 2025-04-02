@@ -17,6 +17,8 @@ class Renderable;
 class Event;
 class Voxel;
 
+constexpr float GRAVITY = 20.0f;
+
 struct WorldStatus {
     glm::vec3 playerPos;
 

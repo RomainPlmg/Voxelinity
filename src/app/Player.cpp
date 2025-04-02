@@ -6,6 +6,7 @@
 #include "gfx/GraphicContext.h"
 #include "utils/Logger.h"
 #include "utils/Time.h"
+#include "World.h"
 
 Player::Player() : Entity(glm::vec3(.7f, 1.9f, .7f), glm::vec3(.35f, 0.0f, .35f)), m_GodMode(false) {}
 
@@ -33,43 +34,51 @@ void Player::Update() {
         }
         if (Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT)) m_Velocity.y = !m_Grounded ? -15.0f * static_cast<float>(Time::Get().GetDeltaTime()) : 0.0f;
 
-        float acc = 2.0f * static_cast<float>(Time::Get().GetDeltaTime());
+        float acc = 4.0f;
 
+        // Acceleration
         if (glm::length(accelerationDir) > 0.0f) {
             accelerationDir = glm::normalize(accelerationDir);
-            m_Velocity.x += accelerationDir.x * acc;
-            m_Velocity.z += accelerationDir.z * acc;
+            m_Velocity.x += accelerationDir.x * acc * static_cast<float>(Time::Get().GetDeltaTime());
+            m_Velocity.z += accelerationDir.z * acc * static_cast<float>(Time::Get().GetDeltaTime());
         }
 
+        // Friction
         if (glm::length(m_Velocity)) {
-            m_Velocity.x -= m_Velocity.x * acc * 2.0f;
-            m_Velocity.z -= m_Velocity.z * acc * 2.0f;
+            m_Velocity.x -= m_Velocity.x * acc * static_cast<float>(Time::Get().GetDeltaTime());
+            m_Velocity.z -= m_Velocity.z * acc * static_cast<float>(Time::Get().GetDeltaTime());
         }
 
-        if (glm::length(m_Velocity) > PLAYER_MAX_SPEED) {
-            m_Velocity = glm::normalize(m_Velocity) * static_cast<float>(PLAYER_MAX_SPEED);
+        // Speed limit
+        float maxSpeed = static_cast<float>(PLAYER_MAX_SPEED) * static_cast<float>(Time::Get().GetDeltaTime());
+        if (glm::length(m_Velocity) > maxSpeed) {
+            m_Velocity = glm::normalize(m_Velocity) * maxSpeed;
         }
 
         Move(m_Velocity);
 
         m_Velocity.y = 0.0f;
     } else {
+        glm::vec3 position = m_Position;
+        float speed = static_cast<float>(PLAYER_MAX_SPEED) / 2;
         if (glm::length(accelerationDir) > 0.0f) {
             accelerationDir = glm::normalize(accelerationDir);
-            m_Velocity.x = accelerationDir.x * 10.0f * static_cast<float>(Time::Get().GetDeltaTime());
-            m_Velocity.z = accelerationDir.z * 10.0f * static_cast<float>(Time::Get().GetDeltaTime());
+            position.x += accelerationDir.x * speed * static_cast<float>(Time::Get().GetDeltaTime());
+            position.z += accelerationDir.z * speed * static_cast<float>(Time::Get().GetDeltaTime());
         }
 
         if (Input::IsKeyPressed(GLFW_KEY_SPACE) && m_Grounded) {
-            m_Velocity.y = 0.25f;
+            m_Velocity.y = PLAYER_JUMP_STRENGTH;
             m_Grounded = false;
         }
 
         if (!m_Grounded) {
-            m_Velocity.y -= 0.8f * static_cast<float>(Time::Get().GetDeltaTime());
+            m_Velocity.y -= GRAVITY * static_cast<float>(Time::Get().GetDeltaTime());
         }
 
-        Move(m_Velocity);
+        position.y += m_Velocity.y * static_cast<float>(Time::Get().GetDeltaTime());
+
+        SetPosition(position);
 
         m_Velocity.x = 0.0f;
         m_Velocity.z = 0.0f;
@@ -88,4 +97,13 @@ void Player::OnEvent(const Event& event) {
         const auto* godEvent = dynamic_cast<const SetGodModeEvent*>(&event);
         m_GodMode = godEvent->god;
     }
+}
+
+void Player::SetPosition(const glm::vec3& position) {
+    glm::vec3 lastposition = m_Position;
+    Entity::SetPosition(position);
+    m_BoundingBox.Move(m_Position - lastposition);
+    glm::vec3 camPos = m_Position;
+    camPos.y = m_Position.y + 1.9f;
+    m_Camera.SetPosition(camPos);
 }

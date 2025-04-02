@@ -27,7 +27,7 @@ class Entity {
     /* Setters */
     void SetBoundingBox(const Box& box) { m_BoundingBox = box; }
     void SetVelocity(const glm::vec3& velocity) { m_Velocity = velocity; }
-    void SetPosition(const glm::vec3& position) { m_Position = position; }
+    virtual void SetPosition(const glm::vec3& position) { m_Position = position; }
     void SetGrounded(bool grounded) { m_Grounded = grounded; }
 
    protected:
