@@ -6,7 +6,6 @@
 #include "events/EventApplication.h"
 #include "events/EventDispatcher.h"
 #include "pch.h"
-#include "utils/Box.h"
 
 CollisionManager::CollisionManager(const World& world) : m_Enable(true), m_World(world) {}
 
