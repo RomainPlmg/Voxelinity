@@ -17,7 +17,7 @@ class Player : public Entity {
     Player();
 
     void Init();
-    void Update();
+    void Update(float dt = Time::Get().GetDeltaTime()) override;
     void Move(const glm::vec3& delta) override;
 
     void OnEvent(const Event& event);

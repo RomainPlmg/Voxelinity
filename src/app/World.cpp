@@ -10,6 +10,7 @@
 #include "gfx/Renderable.h"
 #include "gfx/Shader.h"
 #include "pch.h"
+#include "utils/Time.h"
 
 WorldStatus World::m_Status;
 
@@ -29,8 +30,13 @@ void World::Update() {
 
     if (m_IsPaused) return;
 
-    m_Player.Update();
-    m_CollisionManager.Update();
+    float dt = std::min({static_cast<float>(Time::Get().GetDeltaTime()), PHYSICS_STEP});
+    int nbSteps = static_cast<float>(Time::Get().GetDeltaTime()) / dt;
+
+    for (uint8_t i = 0; i < nbSteps; i++) {
+        m_Player.Update(dt);
+        m_CollisionManager.Update();
+    }
 
     m_Player.GetCamera().Update();
 
@@ -67,8 +73,6 @@ Voxel* World::GetVoxel(const glm::vec3& pos) const {
     localPos.x = (static_cast<int>(pos.x) % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
     localPos.y = pos.y;
     localPos.z = (static_cast<int>(pos.z) % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH;
-
-    // LOG_TRACE("Local pos = {0} | {1} | {2}", localPos.x, localPos.y, localPos.z);
 
     Chunk* chunk = m_ChunkManager.GetChunk(chunkPos);
     if (chunk) {

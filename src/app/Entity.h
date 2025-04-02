@@ -6,6 +6,10 @@
 #include <unordered_set>
 
 #include "utils/Box.h"
+#include "utils/Time.h"
+
+constexpr int PHYSICS_RATE = 120;
+constexpr float PHYSICS_STEP = 1.0f / PHYSICS_RATE;
 
 class Entity {
    public:
@@ -13,7 +17,7 @@ class Entity {
     Entity(const glm::vec3& boxsize, const glm::vec3& boxoffet, const glm::vec3& position);
     virtual ~Entity();
 
-    virtual void Update() = 0;
+    virtual void Update(float dt = Time::Get().GetDeltaTime()) = 0;
     virtual void Move(const glm::vec3& delta);
 
     /* Getters */
