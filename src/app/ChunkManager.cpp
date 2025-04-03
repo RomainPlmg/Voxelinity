@@ -6,7 +6,7 @@
 #include "events/EventDispatcher.h"
 #include "gfx/Shader.h"
 
-ChunkManager::ChunkManager() : m_RenderDistance(8), m_NbChunksWithData(0) {
+ChunkManager::ChunkManager() : m_RenderDistance(16), m_NbChunksWithData(0) {
     EventDispatcher::Get().Subscribe(EventCategory::EventCategoryApplication, BIND_EVENT_FN(ChunkManager::OnEvent));
 }
 
@@ -20,19 +20,7 @@ ChunkManager::~ChunkManager() {
 void ChunkManager::Init() {
     for (int z = -m_RenderDistance; z <= m_RenderDistance; z++) {
         for (int x = -m_RenderDistance; x <= m_RenderDistance; x++) {
-            m_Chunks.emplace(glm::ivec3(x, 0, z), std::make_shared<Chunk>(glm::ivec3(x * CHUNK_WIDTH, 0, z * CHUNK_WIDTH)));
-
-            auto& chunk = m_Chunks[glm::ivec3(x, 0, z)];
-            m_ChunksToMesh.push(chunk.get());  // Register the chunk into the vector to iterate later
-            chunk->GetShader()->GetUniform("wireframeColor")->SetValue(glm::vec3(1.0f, 1.0f, 1.0f));
-            chunk->GetShader()->GetUniform("fogStart")->SetValue(static_cast<float>(m_RenderDistance * CHUNK_WIDTH - 16));
-            chunk->GetShader()->GetUniform("fogEnd")->SetValue(static_cast<float>(m_RenderDistance * CHUNK_WIDTH));
-            chunk->GetShader()->GetUniform("fogColor")->SetValue(glm::vec3(0.1f, 0.1f, 0.1f));
-
-            // Send chunk generation in threads
-            auto& noise = m_Noise;
-            ThreadPool::Get().Enqueue(
-                [chunkPtr = chunk, noise]() { chunkPtr->GenerateData(noise); });  // Create a chunkPtr copy to avoid chunk destruction
+            LoadChunk(glm::vec3(x, 0, z));
         }
     }
 }
@@ -58,6 +46,23 @@ void ChunkManager::Update() {
     }
 }
 
+void ChunkManager::LoadChunk(const glm::vec3& position) {
+    m_Chunks.emplace(position, std::make_shared<Chunk>(glm::ivec3(position.x * CHUNK_WIDTH, 0, position.z * CHUNK_WIDTH)));
+
+    auto& chunk = m_Chunks[position];
+    m_ChunksToMesh.push(chunk.get());  // Register the chunk into the vector to iterate later
+    chunk->GetShader()->GetUniform("wireframeColor")->SetValue(glm::vec3(1.0f, 1.0f, 1.0f));
+    chunk->GetShader()->GetUniform("fogStart")->SetValue(static_cast<float>(m_RenderDistance * CHUNK_WIDTH - 16));
+    chunk->GetShader()->GetUniform("fogEnd")->SetValue(static_cast<float>(m_RenderDistance * CHUNK_WIDTH));
+    chunk->GetShader()->GetUniform("fogColor")->SetValue(glm::vec3(0.1f, 0.1f, 0.1f));
+
+    // Send chunk generation in threads
+    auto& noise = m_Noise;
+    ThreadPool::Get().Enqueue([chunkPtr = chunk, noise]() { chunkPtr->GenerateData(noise); });  // Create a chunkPtr copy to avoid chunk destruction
+}
+
+void ChunkManager::UnloadChunk(const glm::vec3& position) { m_Chunks.erase(position); }
+
 std::array<std::shared_ptr<Chunk>, 4> ChunkManager::GetNeighbors(glm::ivec3 pos) {
     glm::ivec3 finalPos = pos;
     finalPos.x /= CHUNK_WIDTH;
@@ -78,6 +83,15 @@ std::array<std::shared_ptr<Chunk>, 4> ChunkManager::GetNeighbors(glm::ivec3 pos)
                            ? m_Chunks[glm::vec3(finalPos.x, finalPos.y, finalPos.z - 1)]
                            : nullptr;
     return neighbors;
+}
+
+glm::ivec3 ChunkManager::ToChunkCoord(const glm::vec3& worldPosition) {
+    glm::ivec3 chunkCoord;
+    chunkCoord.x = static_cast<int>(worldPosition.x) / CHUNK_WIDTH;
+    chunkCoord.y = 0;
+    chunkCoord.z = static_cast<int>(worldPosition.z) / CHUNK_WIDTH;
+
+    return chunkCoord;
 }
 
 void ChunkManager::OnEvent(const Event& event) {

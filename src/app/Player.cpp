@@ -75,11 +75,9 @@ void Player::Update(float dt) {
             m_Velocity.y -= GRAVITY * dt;
         }
 
-        if (glm::length(m_Velocity) > PHYSICS_RATE ) {
+        if (glm::length(m_Velocity) > PHYSICS_RATE) {
             m_Velocity = glm::normalize(m_Velocity) * static_cast<float>(PHYSICS_RATE);
         }
-
-        LOG_TRACE("{}", m_Velocity.y * dt);
 
         position.y += m_Velocity.y * dt;
 

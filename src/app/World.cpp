@@ -14,7 +14,7 @@
 
 WorldStatus World::m_Status;
 
-World::World() : m_IsPaused(false), m_CollisionManager(*this) {}
+World::World() : m_IsPaused(false), m_LastPlayerPos(glm::vec3(0.0f)), m_CollisionManager(*this) {}
 
 World::~World() {}
 
@@ -22,6 +22,7 @@ void World::Init() {
     EventDispatcher::Get().Subscribe(EventCategory::EventCategoryAll, BIND_EVENT_FN(World::OnEvent));
     m_Player.Init();
     m_Player.Move(glm::vec3(0, CHUNK_HEIGHT, 0));
+    m_LastPlayerPos = m_Player.GetPosition();
     m_ChunkManager.Init();
 }
 
@@ -29,6 +30,8 @@ void World::Update() {
     m_ChunkManager.Update();
 
     if (m_IsPaused) return;
+
+    m_LastPlayerPos = m_Player.GetPosition();
 
     float dt = std::min({static_cast<float>(Time::Get().GetDeltaTime()), PHYSICS_STEP});
     int nbSteps = static_cast<float>(Time::Get().GetDeltaTime()) / dt;
@@ -39,6 +42,12 @@ void World::Update() {
     }
 
     m_Player.GetCamera().Update();
+
+    glm::ivec3 chunkPos = m_ChunkManager.ToChunkCoord(m_Player.GetPosition());
+    glm::ivec3 lastChunkPos = m_ChunkManager.ToChunkCoord(m_LastPlayerPos);
+    if (chunkPos != lastChunkPos) {
+        LOG_TRACE("NEED TO UPDATE WORLD");
+    }
 
     // Update status
     m_Status.playerPos = m_Player.GetPosition();

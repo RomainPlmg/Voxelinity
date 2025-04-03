@@ -20,13 +20,17 @@ class ChunkManager {
     ~ChunkManager();
     void Init();
     void Update();
+    void LoadChunk(const glm::vec3& position);
+    void UnloadChunk(const glm::vec3& position);
 
     std::array<std::shared_ptr<Chunk>, 4> GetNeighbors(glm::ivec3 pos);
+    glm::ivec3 ToChunkCoord(const glm::vec3& worldPosition);
 
     void OnEvent(const Event& event);
 
     /* Getters */
     Chunk* GetChunk(glm::ivec3 pos) const;
+    int GetRenderDistance() const { return m_RenderDistance; }
 
     /* Setters */
     void SetRenderDistance(int distance) { m_RenderDistance = distance; }

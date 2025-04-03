@@ -47,6 +47,7 @@ class World {
     Player m_Player;
     ChunkManager m_ChunkManager;
     CollisionManager m_CollisionManager;
+    glm::vec3 m_LastPlayerPos;
 
     static WorldStatus m_Status;
 };
