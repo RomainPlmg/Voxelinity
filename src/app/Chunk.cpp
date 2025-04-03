@@ -56,6 +56,8 @@ Chunk::Chunk(glm::ivec3 position) : m_DataGenerated(false), m_MeshGenerated(fals
     EventDispatcher::Get().Subscribe(EventCategory::EventCategoryAll, BIND_EVENT_FN(Chunk::OnEvent));
 }
 
+Chunk::~Chunk() { Unregister(); }
+
 void Chunk::GenerateData(const FastNoiseLite& noise) {
     int boundaryIndex = 0;
     for (int z = 0; z < CHUNK_WIDTH; z++) {

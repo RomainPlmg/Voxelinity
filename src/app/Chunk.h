@@ -29,6 +29,7 @@ enum NeighborIndex {
 class Chunk : public Renderable {
    public:
     Chunk(glm::ivec3 position);
+    ~Chunk();
 
     void GenerateData(const FastNoiseLite& noise);
     void GenerateMesh();
